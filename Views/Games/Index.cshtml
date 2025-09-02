@@ -34,7 +34,7 @@
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Image)
+                    <img src="@item.Image" style="height : 200px" />
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.ReleaseYear)
@@ -42,7 +42,7 @@
             <td>
                     @if(item.Genre != null)
                     {
-                        @Html.DisplayFor(modelItem => item.Genre.Id)
+                        @Html.DisplayFor(modelItem => item.Genre.Name)
                     }
             </td>
             <td>

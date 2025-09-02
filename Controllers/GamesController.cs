@@ -48,7 +48,7 @@ namespace RelationsNaN.Controllers
         // GET: Games/Create
         public IActionResult Create()
         {
-            ViewData["GenreId"] = new SelectList(_context.Genre, "Id", "Id");
+            ViewData["GenreId"] = new SelectList(_context.Genre, "Id", "Name");
             return View();
         }
 
@@ -65,7 +65,7 @@ namespace RelationsNaN.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GenreId"] = new SelectList(_context.Genre, "Id", "Id", game.GenreId);
+            ViewData["GenreId"] = new SelectList(_context.Genre, "Id", "Name", game.GenreId);
             return View(game);
         }
 
@@ -82,7 +82,7 @@ namespace RelationsNaN.Controllers
             {
                 return NotFound();
             }
-            ViewData["GenreId"] = new SelectList(_context.Genre, "Id", "Id", game.GenreId);
+            ViewData["GenreId"] = new SelectList(_context.Genre, "Id", "Name", game.GenreId);
             return View(game);
         }
 
@@ -118,7 +118,7 @@ namespace RelationsNaN.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GenreId"] = new SelectList(_context.Genre, "Id", "Id", game.GenreId);
+            ViewData["GenreId"] = new SelectList(_context.Genre, "Id", "Name", game.GenreId);
             return View(game);
         }
 
