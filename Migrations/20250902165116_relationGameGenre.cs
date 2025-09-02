@@ -16,6 +16,8 @@ namespace RelationsNaN.Migrations
                 type: "int",
                 nullable: true);
 
+            //nullable : true indique que la relation est optionnelle.
+
             migrationBuilder.CreateIndex(
                 name: "IX_Game_GenreId",
                 table: "Game",
