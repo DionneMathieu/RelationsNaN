@@ -22,7 +22,7 @@ namespace RelationsNaN.Controllers
         // GET: Games
         public async Task<IActionResult> Index()
         {
-            var relationsNaNContext = _context.Game.Include(g => g.Genre);
+            var relationsNaNContext = _context.Game.Include(g => g.Genre).Include(p => p.Platforms);
             return View(await relationsNaNContext.ToListAsync());
         }
 
@@ -49,6 +49,7 @@ namespace RelationsNaN.Controllers
         public IActionResult Create()
         {
             ViewData["GenreId"] = new SelectList(_context.Genre, "Id", "Name");
+            ViewData["Platforms"] = new SelectList(_context.Platform, "Id", "Name");
             return View();
         }
 
@@ -66,6 +67,7 @@ namespace RelationsNaN.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["GenreId"] = new SelectList(_context.Genre, "Id", "Name", game.GenreId);
+            ViewData["Platforms"] = new SelectList(_context.Platform, "Id", "Name");
             return View(game);
         }
 
@@ -77,12 +79,13 @@ namespace RelationsNaN.Controllers
                 return NotFound();
             }
 
-            var game = await _context.Game.FindAsync(id);
+            var game = await _context.Game.Where(x => x.Id == id).Include(x => x.Platforms).FirstOrDefaultAsync();
             if (game == null)
             {
                 return NotFound();
             }
             ViewData["GenreId"] = new SelectList(_context.Genre, "Id", "Name", game.GenreId);
+            ViewData["Platforms"] = new SelectList(_context.Platform.Where(p => !p.Games.Contains(game)), "Id", "Name");
             return View(game);
         }
 
@@ -119,6 +122,7 @@ namespace RelationsNaN.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["GenreId"] = new SelectList(_context.Genre, "Id", "Name", game.GenreId);
+            ViewData["Platforms"] = new SelectList(_context.Platform.Where(x => !x.Games.Contains(game)), "Id", "Name");
             return View(game);
         }
 
@@ -153,6 +157,34 @@ namespace RelationsNaN.Controllers
             }
 
             await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        //Post: Games/AddPlatform
+        public async Task<IActionResult> AddPlatform(int id, int platformId)
+        {
+            var game = await _context.Game.Where(x => x.Id == id).Include(x => x.Platforms).FirstOrDefaultAsync();
+            var platform = await _context.Platform.Where(x => x.Id == platformId).Include(x => x.Games).FirstOrDefaultAsync();
+
+            game.Platforms.Add(platform);
+            platform.Games.Add(game);
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        //Post: Games/RemovePlatform
+        public async Task<IActionResult> RemovePlatform(int id, int platformId)
+        {
+            var game = await _context.Game.Where(x => x.Id == id).Include(x => x.Platforms).FirstOrDefaultAsync();
+            var platform = await _context.Platform.Where(x => x.Id == platformId).Include(x => x.Games).FirstOrDefaultAsync();
+
+            game.Platforms.Remove(platform);
+            platform.Games.Remove(game);
+
+            await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
